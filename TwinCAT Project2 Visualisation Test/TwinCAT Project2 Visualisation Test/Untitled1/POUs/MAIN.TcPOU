@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="MAIN" Id="{d002951c-2100-47d0-b5f2-12a208abc198}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	iRBig : REAL := 150;
+	iRSmall : REAL := 50;
+	rAngle: REAL;
+	rAngularVelocity : REAL := 90;
+	rSmallX: REAL;
+	rSmallY: REAL;
+	PI: REAL := 3.14159;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF iRSmall > (iRBig / 2) THEN
+	iRSmall := iRBig/2;
+END_IF
+
+rAngle := rAngle + (0.01 * rAngularVelocity);
+
+rSmallX := iRBig + (iRBig - iRSmall)*COS(rAngle * (PI / 180)) - iRSmall;
+rSmallY := iRBig + (iRBig - iRSmall)*SIN(rAngle * (PI / 180)) - iRSmall;
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
