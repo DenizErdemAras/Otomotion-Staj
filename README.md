@@ -31,4 +31,4 @@ Gerçek değer hedefe ulaşınca sistem r_in_material ve r_out_material'i eşit 
 (Bu programı başka bir bilgisayarda TwinCAT 2 kullanarak yazdım. Daha sonra kodu bende de dursun diye bir kısmını kendi bilgisayarıma taşımaya çalıştım. Grafik arayüz kısmı olmadığı için TwinCAT 3 için olan versiyonu çalışmaz halde.)
 (TwinCAT 2 dosyası da mevcut ama kodlar dosyadan kolayca görüntülenemiyor. Sadece TwinCAT 2 programıla görüntülenebiliyor.)
 Ses de gerekli olduğu için buna gif değil video koydum.
-https://photos.google.com/photo/AF1QipMGWbRCjwGN6WZoBO-HBNEGkEbL1rhJXyLid896
+https://drive.google.com/file/d/11DFyeIzoYNQO2H27AdMxx5bk8NdaiOdF/view
