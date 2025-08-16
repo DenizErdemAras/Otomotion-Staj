@@ -1,6 +1,8 @@
 # Otomotion-Staj
 
-Stajda süresince yazdığım, elimdeki çalışır haldeki projeler.
+Stajda süresince yazdığım, elimde bulunan çalışır haldeki bitmiş projeler.
+
+Kodların çalıştırılabilmesi için TwinCAT 3 programı gerekli. Ama sadece kodları görmek için proje dosyaları içinde POUs klasöründeki dosyalara bakabilirsiniz. (TC2_ServoPiano hariç. Bu bir TwinCAT 2 projesi ve kodlar programsız görüntülenemiyor.)
 
 ## Rampa Bloğu (Rampa Blogu)
 İstenen hedef değere belirtilen artış ve azalış sürelerinde ulaşan fonksiyon bloğu.
