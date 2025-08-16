@@ -1,0 +1,84 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="fb_MUZIK_Parser" Id="{1de02450-770e-48af-b0ba-9de9dfad97a3}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK fb_MUZIK_Parser
+VAR_INPUT
+	MUZIK 		: STRING(512);
+	i_next 		: BOOL;
+	r_OFFSET	: REAL;
+	b_stop   	: BOOL := TRUE;
+END_VAR
+VAR_OUTPUT
+	r_mm 		: REAL;
+	newNote		: BOOL;
+END_VAR
+VAR
+	char 		: STRING(4);
+	s_reading	: STRING;
+	s_NOTE		: STRING;
+	r_OCTAVE	: REAL;
+	s_OCTARR	: ARRAY[1..10] OF STRING(4) := ['0', '1', '2'];
+	i			: INT;
+	i_counter	: INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF i_next THEN
+	i_counter := i_counter - 1;
+
+	IF i_counter < 1 THEN
+		newNote := TRUE;
+		s_reading := '';
+		r_OCTAVE := 1;
+		REPEAT
+			i := i + 1;
+			char := MID(MUZIK, 1, i);
+			IF STRING_in_ARRAY(char, s_OCTARR) THEN
+				r_OCTAVE := STRING_TO_REAL(char);
+			ELSE
+				s_reading := CONCAT(s_reading, char);
+			END_IF
+		UNTIL MID(MUZIK, 1, i+1) = ' ' OR MID(MUZIK, 1, i+1) = '*' OR i+1 > LEN(MUZIK)
+		END_REPEAT
+
+		i := i + 1;
+
+		IF i >= LEN(MUZIK) THEN
+			i := 0;
+		END_IF
+
+		s_NOTE := s_reading;
+
+		IF MID(MUZIK, 1, i) = '*' THEN
+			s_reading := '';
+			REPEAT
+				i := i + 1;
+				char := MID(MUZIK, 1, i);
+				s_reading := CONCAT(s_reading, char);
+			UNTIL MID(MUZIK, 1, i+1) = ' ' OR i+1 > LEN(MUZIK)
+			END_REPEAT
+			i := i + 1;
+			IF i >= LEN(MUZIK) THEN
+				r_mm := 0;
+				i:= 0;
+			END_IF
+
+			i_counter := STRING_TO_INT(s_reading);
+		END_IF
+	ELSE
+		newNote := FALSE;
+	END_IF
+
+	IF s_NOTE = '-' OR s_NOTE = 'x' THEN
+		newNote := FALSE;
+		IF b_stop THEN
+			r_mm := 0;
+		END_IF
+	ELSE
+		r_mm := f_noteDecoder(s_NOTE, r_OCTAVE, r_OFFSET);
+	END_IF
+END_IF
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

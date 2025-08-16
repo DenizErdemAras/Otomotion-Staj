@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="nota_hiz_donusturucu" Id="{aed1288b-1585-4b47-8ee7-f8035076d6a2}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION nota_hiz_donusturucu : REAL
+VAR_INPUT
+	nota :REAL;
+	offset : REAL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[nota_hiz_donusturucu := LIMIT(0, (((((nota + offset)+8.845)*((nota + offset)+8.845)/9.708) + 29.03139) * 100), 8800);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

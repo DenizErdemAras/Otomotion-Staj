@@ -1,0 +1,15 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Refactors>
+  <Renames>
+    <RenamedType>
+      <Type guid="1de02450-770e-48af-b0ba-9de9dfad97a3">MUZIK_PARSER</Type>
+      <From>MUZIK_Parser</From>
+      <To>fb_MUZIK_Parser</To>
+    </RenamedType>
+    <RenamedSymbol>
+      <Type guid="bcfbd842-3f32-4300-8048-380f04840f1a">f_noteDecoder</Type>
+      <From>s_OCTAVE</From>
+      <To>r_OCTAVE</To>
+    </RenamedSymbol>
+  </Renames>
+</Refactors>

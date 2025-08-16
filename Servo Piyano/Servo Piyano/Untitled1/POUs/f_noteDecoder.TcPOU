@@ -1,0 +1,57 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="f_noteDecoder" Id="{bcfbd842-3f32-4300-8048-380f04840f1a}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION f_noteDecoder : REAL
+VAR_INPUT
+	s_NOTE 		: STRING;
+	r_OCTAVE	: REAL;	
+	r_OFFSET	: REAL;
+END_VAR
+VAR
+	nota_01 : ARRAY[1..10] OF STRING(4)  := ['0', 'DO', 'C'];
+	nota_02 : ARRAY[1..10] OF STRING(4)  := ['1', 'DO#', 'DOd', 'DOs', 'C#', 'Cd', 'Cs', 'REb', 'Db'];
+	nota_03 : ARRAY[1..10] OF STRING(4)  := ['2', 'RE', 'D'];
+	nota_04 : ARRAY[1..10] OF STRING(4)  := ['3', 'RE#', 'REd', 'REs', 'D#', 'Dd', 'Ds', 'MIb', 'Eb'];
+	nota_05 : ARRAY[1..10] OF STRING(4)  := ['4', 'MI', 'E'];
+	nota_06 : ARRAY[1..10] OF STRING(4)  := ['5', 'FA', 'F'];
+	nota_07 : ARRAY[1..10] OF STRING(4)  := ['6', 'FA#', 'FAd', 'FAs', 'F#', 'Fd', 'Fs', 'SOLb', 'Gb'];
+	nota_08 : ARRAY[1..10] OF STRING(4)  := ['7', 'SOL', 'G'];
+	nota_09 : ARRAY[1..10] OF STRING(4)  := ['8', 'SOL#', 'SOLd', 'SOLs', 'G#', 'Gd', 'Gs', 'LAb', 'Ab'];
+	nota_10 : ARRAY[1..10] OF STRING(4)  := ['9', 'LA', 'A'];
+	nota_11 : ARRAY[1..10] OF STRING(4)  := ['10', 'LA#', 'LAd', 'LAs', 'A#', 'Ad', 'As', 'SIb', 'Bb'];
+	nota_12 : ARRAY[1..10] OF STRING(4)  := ['11', 'SI', 'B'];
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[r_OCTAVE := r_OCTAVE - 1;
+IF    STRING_in_ARRAY(s_NOTE, nota_01) THEN
+	f_noteDecoder := nota_hiz_donusturucu(1  + (12 * r_OCTAVE), r_OFFSET);
+ELSIF STRING_in_ARRAY(s_NOTE, nota_02) THEN
+	f_noteDecoder := nota_hiz_donusturucu(2  + (12 * r_OCTAVE), r_OFFSET);
+ELSIF STRING_in_ARRAY(s_NOTE, nota_03) THEN
+	f_noteDecoder := nota_hiz_donusturucu(3  + (12 * r_OCTAVE), r_OFFSET);
+ELSIF STRING_in_ARRAY(s_NOTE, nota_04) THEN
+	f_noteDecoder := nota_hiz_donusturucu(4  + (12 * r_OCTAVE), r_OFFSET);
+ELSIF STRING_in_ARRAY(s_NOTE, nota_05) THEN
+	f_noteDecoder := nota_hiz_donusturucu(5  + (12 * r_OCTAVE), r_OFFSET);
+ELSIF STRING_in_ARRAY(s_NOTE, nota_06) THEN
+	f_noteDecoder := nota_hiz_donusturucu(6  + (12 * r_OCTAVE), r_OFFSET);
+ELSIF STRING_in_ARRAY(s_NOTE, nota_07) THEN
+	f_noteDecoder := nota_hiz_donusturucu(7  + (12 * r_OCTAVE), r_OFFSET);
+ELSIF STRING_in_ARRAY(s_NOTE, nota_08) THEN
+	f_noteDecoder := nota_hiz_donusturucu(8  + (12 * r_OCTAVE), r_OFFSET);
+ELSIF STRING_in_ARRAY(s_NOTE, nota_09) THEN
+	f_noteDecoder := nota_hiz_donusturucu(9  + (12 * r_OCTAVE), r_OFFSET);
+ELSIF STRING_in_ARRAY(s_NOTE, nota_10) THEN
+	f_noteDecoder := nota_hiz_donusturucu(10 + (12 * r_OCTAVE), r_OFFSET);
+ELSIF STRING_in_ARRAY(s_NOTE, nota_11) THEN
+	f_noteDecoder := nota_hiz_donusturucu(11 + (12 * r_OCTAVE), r_OFFSET);
+ELSIF STRING_in_ARRAY(s_NOTE, nota_12) THEN
+	f_noteDecoder := nota_hiz_donusturucu(12 + (12 * r_OCTAVE), r_OFFSET);
+ELSE
+	f_noteDecoder := 0;
+END_IF
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

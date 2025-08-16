@@ -1,0 +1,230 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="MAIN" Id="{6442d795-37d1-4f07-9d20-966bcdee7aa6}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	b_butonlar 	: ARRAY[1..15] OF BOOL;
+	r_zamanlar 	: ARRAY[1..15] OF REAL;
+	b_togglelar : ARRAY[1..15] OF BOOL;
+	b_scale		: ARRAY[1..12] OF BOOL;
+
+	r_key		: REAL;
+
+	i			: INT;
+	j 			: INT := 1;
+	k			: INT := 1;
+	key_count	: INT;
+	last_key	: INT;
+	direction   : INT := 1;
+	style		: INT;
+	b_style		: BOOL;
+	b_oldStyle  : BOOL;
+
+	r_mm 		: REAL;
+	r_offset	: REAL;
+	r_Timer		: REAL;
+
+	mcPower		:MC_Power;
+	motor1		:AXIS_REF;
+	mcJog		:MC_Jog;
+	r_acceleration : REAL := 90000;
+	r_deceleration : REAL := 40000;
+
+	b_Manuel  	: BOOL;
+	b_vibrato	: BOOL;
+	b_Muzik		: BOOL;
+	b_Otomatik	: BOOL;
+	b_Major		: BOOL := TRUE;
+
+	s_MajorMinor: STRING := 'Major';
+	b_ScaleMajor: ARRAY[1..12] OF BOOL := [TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, FALSE, TRUE];
+	b_ScaleMinor: ARRAY[1..12] OF BOOL := [TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, FALSE, TRUE, TRUE, FALSE, TRUE, FALSE];
+
+	MUZIK_BPS 	: REAL := 10;
+	OTOMATIK_BPS: REAL := 1;
+
+	r_BPMTimer 	: REAL;
+	r_timerOffset : REAL;
+	r_noteTimer	: REAL;
+
+	MUZIK_Parser : fb_MUZIK_Parser;
+
+	MuzikCalmaTuru : BOOL := TRUE;
+
+	(* Offset = -2 yap *)
+	MUZIK		: ARRAY[1..100] OF REAL := [1, 1, 1, 5, 5, 5, 8, 8, 6, 6, 6, 10, 10, 10, 13, 13, 1, 1, 1, 5, 5, 5, 8, 8, 6, 13, 12, 13, 12, 13, 8, 5, 1, 1, 1, 5, 5, 5, 8, 8, 6, 6, 6, 10, 10, 10, 13, 13, 1, 1, 16, 16, 16, 15, 15, 15, 13, 13, 13, 8, 7, 8, 7, 4, -1];
+	M_TETRIS 	: STRING(255)	 := ['A - E F G - F E D - D F A - G F E - - F G - A - F - D - D -*4 G - Bb D2 - C2 Bb A - - F A - G F E - E F G - A - F - D - D -*3'];
+	M_CANAKKALE	: STRING(512) := ['E - Fs*2 -*2 Fs - Fs*10 E2*4 Eb2 E2 Eb2*3 E2*3 Db2*7 D2 Db2 B*3 Db2*6 Eb2*6 E2*6 Db2*6 B*19 -*5 B*3 Db2*3 -*3 Db2*2 - Db2*5 - Db2*3 B*2 - B*5 - B C2*2 B C2 B A*3 Ab*3 A*5 - Ab*3 A*3 B*3 A*3 C2*3 B*3 A*3 Ab*3 Fs*9 E*3 Ab*3 A*3 B*3 Db2*3 -*3 A*5 - Ab*2 - Ab*2 - Fs*8 - Fs*12 - Fs -*18'];
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF NOT (b_Muzik OR b_Otomatik) THEN
+	r_mm := 0;
+END_IF
+
+(* Piyano tuşlarıyla çalma *)
+IF b_Manuel THEN
+	FOR i := 1 TO 15 DO
+		IF b_butonlar[i] THEN
+			r_zamanlar[i] := r_zamanlar[i] + 0.01;
+	
+			IF i = 1 THEN
+				r_mm := nota_hiz_donusturucu(i, r_offset);
+			ELSE
+				IF (r_zamanlar[i] < r_zamanlar[i-1] AND r_zamanlar[i-1] > 0) OR r_zamanlar[i-1] = 0 THEN
+					r_mm := nota_hiz_donusturucu(i, r_offset);
+				END_IF
+			END_IF
+		ELSE
+			r_zamanlar[i] := 0;
+		END_IF
+	END_FOR
+END_IF
+
+
+
+(* MUZIK'te kayıtlı müziği çalma  -----ESKI----- *)
+IF b_Muzik AND NOT MuzikCalmaTuru THEN
+	r_BPMTimer := r_BPMTimer + 0.01;
+	IF r_BPMTimer > 1/MUZIK_BPS THEN
+		r_BPMTimer := 0;
+		j := j + 1;
+	END_IF
+
+	IF MUZIK[j] = -1 THEN
+		j := 1;
+	END_IF
+	IF MUZIK[j] > 0 THEN
+		r_MM := nota_hiz_donusturucu(MUZIK[j], r_offset);
+	END_IF
+END_IF
+
+
+
+(* Daha iyi müzik çalar *)
+IF b_Muzik AND MuzikCalmaTuru THEN
+	r_offset := -2;
+	IF r_noteTimer > 0 THEN
+		r_noteTimer := r_noteTimer - 0.01;
+	END_IF
+
+	r_BPMTimer := r_BPMTimer + 0.01;
+	IF r_BPMTimer > 1/MUZIK_BPS + SEL(r_mm = 0, 0, r_timerOffset) THEN
+		r_BPMTimer := SEL(r_mm = 0, 0.0, r_timerOffset);
+		MUZIK_Parser(
+			MUZIK 		:= M_CANAKKALE,
+			i_next 		:= TRUE,
+			r_OFFSET	:= r_offset,
+			b_stop 		:= FALSE,);
+	END_IF
+	IF MUZIK_Parser.newNote THEN
+		r_noteTimer := 0.02;
+	END_IF
+	r_MM := MUZIK_Parser.r_mm + ((r_noteTimer) * -6000);
+END_IF
+
+
+
+(* Anahtar ve gam  *)
+r_key := 0;
+FOR i := 1 TO 12 DO
+	IF b_scale[i] THEN
+		r_key := i;
+	END_IF
+END_FOR
+
+IF r_key > 0 THEN
+	FOR i := 0 TO 11 DO
+		key_count := REAL_TO_INT(r_key) + i;
+		IF key_count > 12 THEN
+			key_count := key_count - 12;
+		END_IF
+		IF b_Major THEN
+			b_togglelar[key_count] := b_ScaleMajor[i+1];
+		ELSE
+			b_togglelar[key_count] := b_ScaleMinor[i+1];
+		END_IF
+	END_FOR
+	b_togglelar[13] := b_togglelar[1];
+	b_togglelar[14] := FALSE;
+	b_togglelar[15] := FALSE;
+END_IF
+
+
+IF b_style AND NOT b_oldStyle THEN
+	IF style > 1 THEN
+		style := 0;
+	ELSE
+		style := style + 1;
+	END_IF
+END_IF
+b_oldStyle := b_style;
+
+(* Otomatik arpej *)
+s_MajorMinor := SEL(b_Major, 'Minor', 'Major');
+IF b_Otomatik THEN
+
+
+	IF r_BPMTimer > 1/OTOMATIK_BPS THEN
+		r_BPMTimer := 0;
+
+		key_count := 0;
+		REPEAT
+			k := k + direction;
+			IF k > 15 OR k < 1 THEN
+				CASE style OF
+					0 :
+						k := 1;
+						direction :=1;
+					1 :
+						k := 15;
+						direction := -1;
+					2 :
+						direction := -direction;
+						k := k + 2*direction;
+				END_CASE
+			END_IF
+			key_count := key_count + 1;
+		UNTIL  key_count > 20 OR (b_togglelar[k] AND last_key <> k)
+		END_REPEAT
+	END_IF
+	IF b_togglelar[k] THEN
+		last_key := k;
+		r_mm := nota_hiz_donusturucu(k, r_offset);
+	ELSE
+		r_mm := 0;
+	END_IF
+	r_BPMTimer := r_BPMTimer + 0.01;
+END_IF
+
+
+
+(* Vibrato *)
+IF b_vibrato AND r_mm > 0 THEN
+	r_mm := LIMIT(0, r_mm + SIN(r_timer * 360*8 * (pi/180)) * 200, 8800);
+END_IF
+r_Timer := r_Timer + 0.01;
+
+
+
+
+mcPower(
+	Axis:= motor1,
+	Enable:= TRUE,
+	Enable_Positive:= TRUE,
+	Enable_Negative:= TRUE,
+	Override:= r_mm/9000 * 100,
+	BufferMode:= MC_Aborting);
+
+mcJog(
+	Axis:= motor1,
+	JogForward:= (r_mm > 0) AND mcPower.Status,
+	JogBackwards:= FALSE,
+	Mode:= MC_JOGMODE_CONTINOUS,
+	Position:= 0,
+	Velocity:= 9000,
+	Acceleration:= r_acceleration,
+	Deceleration:= r_deceleration,
+	Jerk:= 900000);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

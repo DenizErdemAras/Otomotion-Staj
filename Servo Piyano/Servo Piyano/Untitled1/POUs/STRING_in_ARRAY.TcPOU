@@ -1,0 +1,30 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="STRING_in_ARRAY" Id="{b9a0c4d3-b681-4fa1-9fac-afe5cba92905}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION STRING_in_ARRAY : BOOL
+VAR_INPUT
+	s_STRING 	: STRING;
+	s_ARRAY		: ARRAY[1..10] OF STRING(4);
+END_VAR
+VAR
+	i 			: INT;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[FOR i := 1 TO 10 DO
+	IF s_ARRAY[i] = s_STRING THEN
+		STRING_in_ARRAY := TRUE;
+		RETURN;
+		
+	ELSIF s_ARRAY[i] = '' THEN
+		STRING_in_ARRAY := FALSE;
+		RETURN;
+	END_IF
+END_FOR
+
+STRING_in_ARRAY := FALSE;
+RETURN;
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
