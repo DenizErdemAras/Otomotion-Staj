@@ -1,0 +1,2 @@
+882290
+c:\twincat\plc\servopianovis.txt
