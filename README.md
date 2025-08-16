@@ -1,4 +1,7 @@
 # Otomotion-Staj
+
+Stajda süresince yazdığım, elimdeki çalışır haldeki projeler.
+
 ## Rampa Bloğu (Rampa Blogu)
 İstenen hedef değere belirtilen artış ve azalış sürelerinde ulaşan fonksiyon bloğu.
 
