@@ -29,9 +29,9 @@ Bir ucu çembere bağlı, diğer ucu yatay doğrusal hareket yapabilen çubuğun
 ## PID Konrol (PID Control)
 Fonksiyon bloklarıyla hazırlanmış bir gerilim kontrol sistemi simülasyonu.
 
-Simülasyon dancer roll (balerin rulosu) ve PID kontrolcüden oluşuyor.
+Simülasyon dancer roll (balerin rulosu), dancer'den çıkan malzemeyi kontrol eden bir motor ve PID kontrolcüden oluşuyor.
 
-Dancer, içine giren ve çıkan malzeme hızı farkı yüzünden biriken malzemeyi bir yüzdelik değere dönüştürüyor.
+Dancer, içine giren ve çıkan malzeme hızı farkı yüzünden biriken malzemeyi bir yüzdelik değere dönüştürüyor. Giren malzeme hızını basit bir fonksiyonla sürekli değişecek şekilde ayarladım.
 
 Görseldeki sarı renkli çizgi hedef yüzde değerini gösteriyor. Kahverengi olan ise gerçek yüzdeyi.
 
