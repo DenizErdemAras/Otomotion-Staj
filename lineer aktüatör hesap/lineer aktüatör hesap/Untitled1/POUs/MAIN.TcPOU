@@ -1,0 +1,38 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="MAIN" Id="{2a6547d0-ed6c-496a-b25d-a122f27179fd}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	rAngle : REAL;
+	rAngularVelocity : REAL := 60;
+	rRadius : REAL := 80;
+	rStickLength : REAL := 100;
+	rDistance : REAL;
+	rLength : REAL;
+	pi : REAL := 3.14159265;
+	
+	ip1x : REAL;
+	ip1y : REAL;
+	ip2x : REAL;
+	ip2y : REAL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF rRadius > rStickLength THEN
+	rRadius := rStickLength;
+END_IF
+
+rAngle := rAngle + rAngularVelocity * 0.01;
+
+rLength := (1-COS(rAngle * (pi / 180))) * rRadius + SQRT((rStickLength * rStickLength) - (rRadius * rRadius * SIN(rAngle * (pi / 180)) * SIN(rAngle * (pi / 180))));
+rDistance := rLength - rStickLength;
+
+ip1x := COS(rAngle * (pi / 180)) * rRadius * -1;
+ip1y := SIN(rAngle * (pi / 180)) * rRadius;
+
+ip2x := rLength - rRadius;
+ip2y := 0;
+
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
