@@ -1,0 +1,65 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="Rampa" Id="{0069922f-ab87-4aaf-b2dc-2e751f199913}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK Rampa
+VAR_INPUT
+	rTargetRPM : REAL;
+	rInDirection : BOOL;
+	
+	rAccTime : REAL;
+	rDecTime : REAL;
+	
+	rUpdateRPM : BOOL;
+	rNewRPM : REAL;
+END_VAR
+VAR_OUTPUT
+	rRPM : REAL := 0;
+	rCurrentDirection : BOOL;
+END_VAR
+VAR
+	rAuxTargetRPM : REAL;
+	rRampTime : REAL;
+	
+	rOldTargetRPM : REAL;
+	rStartRPM : REAL;
+	rDifference : REAL;
+	rAddRPM : REAL;
+	iTime : INT := 0;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF rCurrentDirection <> rInDirection THEN
+	rAuxTargetRPM := 0;
+ELSE 
+	rAuxTargetRPM := rTargetRPM;
+END_IF
+
+IF rOldTargetRPM <> rAuxTargetRPM THEN
+	rOldTargetRPM := rAuxTargetRPM;
+	rStartRPM := rRPM;
+	iTime := 0;
+END_IF
+
+IF rRPM <> rAuxTargetRPM THEN
+	rDifference := rAuxTargetRPM - rStartRPM;
+	
+	rRampTime := SEL(rAuxTargetRPM < rRPM, rAccTime, rDecTime);
+	
+	rAddRPM := rDifference * (1 - COS(((INT_TO_REAL(iTime)/100)/rRampTime)*pi*2))/2;	
+	
+	iTime := iTime + 1;
+END_IF
+
+IF rRPM = 0 AND rTargetRPM <> rRPM AND rCurrentDirection <> rInDirection THEN
+	rCurrentDirection := rInDirection;
+END_IF
+
+rRPM := rStartRPM + rAddRPM;
+
+IF rUpdateRPM THEN
+	rRPM := rNewRPM;
+	iTime := 0;
+END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

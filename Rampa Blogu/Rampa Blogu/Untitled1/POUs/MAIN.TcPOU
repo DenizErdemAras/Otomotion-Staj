@@ -1,0 +1,66 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="MAIN" Id="{48ea7c40-f798-49e3-821a-fa1a7c0301f9}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	bStartButton : BOOL;
+	bEmergencyStopButton : BOOL;
+
+	fbRampaBlogu : Rampa;
+	rTarget : REAL;
+	rAuxTarget : REAL;
+	rAccelerationTime : REAL := 4;
+	rDecelerationTime : REAL := 2;
+	rTargetDirectioonn : BOOL;
+	rDirection : BOOL;
+	
+	rRPM : REAL;
+	bFwStart : BOOL;
+	bBwStart : BOOL;
+END_VAR]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[IF bEmergencyStopButton THEN
+	bFwStart := FALSE;
+	bBwStart := FALSE;
+	
+	fbRampaBlogu(
+	rTargetRPM:= 0,
+	rInDirection:= rTargetDirectioonn, 
+	rAccTime:= rAccelerationTime, 
+	rDecTime:= rDecelerationTime, 
+	rUpdateRPM:= TRUE, 
+	rNewRPM:= 0, 
+	rRPM=> rRPM,
+	rCurrentDirection => rDirection);
+
+ELSE
+	IF bStartButton THEN
+		rAuxTarget := rTarget;
+	ELSE
+		rAuxTarget := 0;
+	END_IF
+	
+	fbRampaBlogu(
+	rTargetRPM:= rAuxTarget,
+	rInDirection:= rTargetDirectioonn, 
+	rAccTime:= rAccelerationTime, 
+	rDecTime:= rDecelerationTime, 
+	rUpdateRPM:= FALSE, 
+	rNewRPM:= 0, 
+	rRPM=> rRPM,
+	rCurrentDirection => rDirection);
+END_IF
+
+	IF rRPM = 0 THEN
+		bFwStart := FALSE;
+		bBwStart := FALSE;	
+	ELSIF rDirection THEN
+		bFwStart := FALSE;
+		bBwStart := TRUE;
+	ELSE
+		bFwStart := TRUE;
+		bBwStart := FALSE;
+	END_IF]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
