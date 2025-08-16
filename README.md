@@ -1,2 +1,7 @@
 # Otomotion-Staj
-Staj Dosyaları
+![demo]()
+
+# Rampa Bloğu
+İstenen hedef değere belirtilen artış ve azalış sürelerinde ulaşan fonksiyon bloğu
+
+![demo](https://raw.githubusercontent.com/DenizErdemAras/Otomotion-Staj/refs/heads/main/Gif/rampa%20blogu.gif)
