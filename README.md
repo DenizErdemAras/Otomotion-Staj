@@ -9,7 +9,7 @@ rTarget değeri değişince, eğer değer artacaksa rAccelerationTime, azalacaks
 ![demo](https://github.com/DenizErdemAras/Otomotion-Staj/blob/a6707ab1886404050e4b50c0cfa450286d6df82f/Gif/rampa_blogu.gif)
 
 # Çember İçinde Dönen Çember (TwinCAT Project2 Visualisation Test)
-Büyük çemberin içinde ona değerek dönen küçük çember
+Büyük çemberin içinde ona değerek dönen küçük çember.
 ![demo](https://github.com/DenizErdemAras/Otomotion-Staj/blob/a001bf171f01b19173778c35d86e45ada6a33280/Gif/visualisation_test.gif)
 
 # Lineer Aktüatör Konum Hesabı (lineer aktüatör hesap)
@@ -28,4 +28,4 @@ Gerçek değer hedefe ulaşınca sistem r_in_material ve r_out_material'i eşit 
 # Servo Piyano (Servo Piyano)
 (Bu programı başka bir bilgisayarda TwinCAT 2 kullanarak yazdım. Daha sonra kodu bende de dursun diye bir kısmını kendi bilgisayarıma taşımaya çalıştım. Grafik arayüz kısmı olmadığı için TwinCAT 3 için olan versiyonu çalışmaz halde.)
 (TwinCAT 2 dosyası da mevcut ama kodlar dosyadan kolayca görüntülenemiyor. Sadece TwinCAT 2 programıla görüntülenebiliyor.)
-[![Watch the video]()](https://photos.app.goo.gl/YXcRqUiGHyyQd4bk6)
+[![Watch the video]()]([https://photos.app.goo.gl/YXcRqUiGHyyQd4bk6](https://photos.google.com/photo/AF1QipMGWbRCjwGN6WZoBO-HBNEGkEbL1rhJXyLid896))
