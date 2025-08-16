@@ -1,0 +1,23 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="fb_dancer" Id="{4c651431-d10f-44a0-94f3-6bf37753e6d1}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK fb_dancer
+VAR_INPUT
+	r_in_cm: REAL;
+	r_out_cm: REAL;
+	r_dt : REAL;
+END_VAR
+VAR_OUTPUT
+	r_accumulation : REAL;
+	r_dancerPercent  : REAL;
+END_VAR
+VAR
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[r_accumulation := r_accumulation + ((r_in_cm - r_out_cm) * r_dt);
+r_dancerPercent := LIMIT(0, r_accumulation / 5, 100);
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

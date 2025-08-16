@@ -1,0 +1,60 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="fb_PID" Id="{7e22742c-2b38-49fa-bb97-2caf82faa9b8}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK fb_PID
+VAR_INPUT
+	r_ActVal : REAL;
+	r_SetVal : REAL;
+	r_Kp : REAL;
+	r_Ki : REAL;
+	r_Kd : REAL;
+	r_dt : REAL;
+	
+	r_maxValue : REAL;
+	r_minValue : REAL;
+	
+	r_SampleRate : REAL;
+END_VAR
+VAR_OUTPUT
+	r_PID : REAL;
+	r_P : REAL;
+	r_I : REAL;
+	r_D : REAL;
+END_VAR
+VAR
+	r_Error : REAL;
+	r_PrevError : REAL;
+	i_ArraySize : INT := 20;
+	r_ErrorHistory : ARRAY[1..20] OF REAL;
+	i : INT;
+	Kp: REAL;
+	r_Sum : REAL;
+	r_SampleCounter : INT := 0;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[r_PrevError := r_Error;
+r_Error := r_SetVal - r_ActVal;
+
+r_SampleCounter := r_SampleCounter + 1;
+
+IF r_SampleCounter = r_SampleRate THEN
+	r_SampleCounter := 0;
+	FOR i := 1 TO i_ArraySize - 1 DO
+		r_ErrorHistory[i+1] := r_ErrorHistory[i];
+	END_FOR
+	r_ErrorHistory[1] := r_Error;
+END_IF 
+
+FOR i := 1 TO i_ArraySize DO
+	r_Sum := r_Sum + r_ErrorHistory[i];
+END_FOR
+
+r_P := r_Kp * r_Error;
+r_I := r_Ki * r_Sum * r_dt;
+r_D := r_Kd * ((r_Error - r_PrevError) / r_dt);
+
+r_PID := LIMIT(r_minValue, r_P + r_I + r_D, r_maxValue);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

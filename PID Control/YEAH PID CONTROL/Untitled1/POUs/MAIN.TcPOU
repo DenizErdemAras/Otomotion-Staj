@@ -1,0 +1,71 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="MAIN" Id="{5cf3bf4b-f0cf-4eaa-a0ad-2ca06fe6c37c}" SpecialFunc="None">
+    <Declaration><![CDATA[PROGRAM MAIN
+VAR
+	r_targetPercent : REAL := 50;
+	r_dancerPercent: REAL;
+	r_accumulated_material_cm : REAL := 0;
+	
+	r_pid_Kp : REAL := -10;
+	r_pid_Ki : REAL := -0.02;
+	r_pid_Kd : REAL := -0.005;
+	
+	fb_motor : fb_motor;
+	r_motorRPM : REAL;
+	
+	r_out_material_cm : REAL;
+	r_in_material_cm : REAL;
+	
+	fb_dancer : fb_dancer;
+	
+	fb_PID: fb_PID;
+	
+	r_PID : REAL;
+	r_P : REAL;
+	r_I: REAL;
+	r_D : REAL;
+	
+	r_Time : REAL;
+	r_t : REAL;
+	r_Kt : REAL := 5;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[fb_motor(
+	r_RPM := r_motorRPM,
+	r_Radius := 20,
+	r_dt := 0.01,
+	r_out_cm => r_out_material_cm);
+
+r_Time := r_Time + 0.01;
+
+r_t := r_Time * r_Kt;
+r_in_material_cm := 4*(20 + SIN(r_t) + SIN((r_t - 2.5) * 0.5)*2 + SIN((r_t + 1)*1.5)*1.33);
+
+fb_dancer(
+	r_in_cm := r_in_material_cm,
+	r_out_cm := r_out_material_cm,
+	r_dt := 0.01,
+	r_accumulation => r_accumulated_material_cm,
+	r_dancerPercent => r_dancerPercent);
+
+fb_PID(
+	r_ActVal:= r_dancerPercent, 
+	r_SetVal:= r_targetPercent, 
+	r_Kp:= r_pid_Kp, 
+	r_Ki:= r_pid_Ki, 
+	r_Kd:= r_pid_Kd, 
+	r_dt:= 0.001, 
+	r_maxValue := 100,
+	r_minValue := -100,
+	r_SampleRate := 1,
+	r_PID=> r_PID, 
+	r_P=> r_P, 
+	r_I=> r_I, 
+	r_D=> r_D);
+
+r_motorRPM := LIMIT(0, r_motorRPM + r_PID, 160);]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>

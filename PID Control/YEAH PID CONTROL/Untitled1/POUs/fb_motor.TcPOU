@@ -1,0 +1,22 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<TcPlcObject Version="1.1.0.1">
+  <POU Name="fb_motor" Id="{481cbe0a-3d1a-46a1-99f0-a59c1ebfeb40}" SpecialFunc="None">
+    <Declaration><![CDATA[FUNCTION_BLOCK fb_motor
+VAR_INPUT
+	r_RPM : REAL;
+	r_Radius : REAL;
+	r_dt : REAL;
+END_VAR
+VAR_OUTPUT
+	r_out_cm : REAL;
+END_VAR
+VAR
+	pi : REAL := 3.14159;
+END_VAR
+]]></Declaration>
+    <Implementation>
+      <ST><![CDATA[r_out_cm := (2 * pi * r_Radius) * (r_RPM / 60);
+]]></ST>
+    </Implementation>
+  </POU>
+</TcPlcObject>
